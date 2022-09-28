@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+
+case "$1" in
+  help | dokkusd:help)
+    help_content_func() {
+      declare desc="return help_content string"
+      cat<<help_content
+    this plugin ......
+help_content
+    }
+
+    if [[ $1 = "dokkusd:help" ]] ; then
+      echo 'help here'
+      echo ''
+    else
+      help_content_func
+    fi
+    ;;
+
+  require)
+    require_main_cmd "$@"
+    ;;
+
+  require:mode)
+    require_mode_cmd "$@"
+    ;;
+
+  *)
+    exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+    ;;
+
+esac

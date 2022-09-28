@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+source "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")/functions"
+
+dokkusd-cmd () {
+  declare desc="help here"
+  local cmd="dokkusd:destroy-cascade" argv=("$@")
+  [[ ${argv[0]} == "$cmd" ]] && shift 1
+  destroy-cascade "$1"
+}
+
+dokkusd-cmd "$@"
