@@ -11,7 +11,6 @@ destroy-cascade() {
   destroy-cascade-service-type-with-link $APP_NAME "mariadb"
   destroy-cascade-service-type-with-link $APP_NAME "mysql"
   destroy-cascade-service-type-with-link $APP_NAME "memcached"
-  destroy-cascade-storage $APP_NAME
   echo $APP_NAME | dokku apps:destroy $APP_NAME
 }
 
@@ -40,27 +39,3 @@ destroy-cascade-service-type-with-link() {
   done <<< "$LINKS"
 }
 
-destroy-cascade-storage() {
-  local APP_NAME="$1"
-  # Process
-  local STORAGES=`dokku storage:list $APP_NAME`
-    while IFS= read -r STORAGE; do
-      if [[ ! -z $STORAGE ]]
-      then
-        if [[ ${STORAGE:0:7} != 'website' ]]
-        then
-          local HOST_DIR="$( echo ${STORAGE%:*} | xargs )"
-          local CONTAINER_DIR="$( echo ${STORAGE#*:} | xargs )"
-          if [[ ! -z $STORAGE ]]
-          then
-            dokku storage:unmount $APP_NAME $STORAGE
-            # Permissions Problem!!!!!!!!!!!!
-            #dokku run $APP_NAME rm -rf "$CONTAINER_DIR/*"
-            # Or
-            #chown -R "dokku:dokku" "${DOKKU_LIB_ROOT}/data/storage/$HOST_DIR"
-            #rm -rf ${DOKKU_LIB_ROOT}/data/storage/$HOST_DIR
-          fi
-        fi
-      fi
-    done <<< "$STORAGES"
-}
